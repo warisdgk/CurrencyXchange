@@ -31,3 +31,9 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Flavor Info File
+/flavor.properties
+
+# Release Key Info File
+/key.properties
