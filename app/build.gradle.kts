@@ -1,6 +1,23 @@
+import java.io.FileInputStream
+import java.util.*
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+}
+
+val keystoreProperties = Properties().apply {
+    load(FileInputStream(File(rootProject.rootDir, "key.properties")))
+}
+
+val currentFlavorProperties = Properties().apply {
+    load(FileInputStream(File(rootProject.rootDir, "flavor.properties")))
+}
+
+val flavorProperties = Properties().apply {
+    val currentFlavorProperties =
+        File(rootProject.rootDir, currentFlavorProperties["flavorPropertiesFileName"] as String)
+    load(FileInputStream(currentFlavorProperties))
 }
 
 android {
@@ -8,11 +25,16 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "mwaris.dev.currencyxchange"
+        applicationId = flavorProperties["applicationId"] as String
         minSdk = 24
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
+        versionNameSuffix = flavorProperties["versionNameSuffix"] as String
+
+        buildConfigField("String", "BASE_API_URL", "\"${flavorProperties["baseApiUrl"]}\"")
+
+        manifestPlaceholders["appName"] = flavorProperties["appName"] as String
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -20,15 +42,47 @@ android {
         }
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties["keyAlias"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
+            storeFile = file(keystoreProperties["storeFile"] as String)
+            storePassword = keystoreProperties["storePassword"] as String
+
+            enableV1Signing = true
+            enableV2Signing = true
         }
     }
+
+    buildTypes {
+        debug {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
+
+            signingConfig = signingConfigs.getByName("debug")
+
+            manifestPlaceholders["enableCrashReporting"] = "false"
+            manifestPlaceholders["enableLogging"] = "true"
+
+            isDebuggable = true
+        }
+        release {
+            isMinifyEnabled = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
+
+            signingConfig = signingConfigs.getByName("release")
+
+            manifestPlaceholders["enableCrashReporting"] = "true"
+            manifestPlaceholders["enableLogging"] = "false"
+
+            isDebuggable = false
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -38,6 +92,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
