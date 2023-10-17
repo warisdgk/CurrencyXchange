@@ -30,12 +30,14 @@ android {
     defaultConfig {
         applicationId = flavorProperties["applicationId"] as String
         minSdk = 24
+        //noinspection OldTargetApi No such requirements for now
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
         versionNameSuffix = flavorProperties["versionNameSuffix"] as String
 
         buildConfigField("String", "BASE_API_URL", "\"${flavorProperties["baseApiUrl"]}\"")
+        buildConfigField("String", "APP_ID", "\"${flavorProperties["appId"]}\"")
 
         manifestPlaceholders["appName"] = flavorProperties["appName"] as String
 
@@ -65,9 +67,6 @@ android {
             )
 
             signingConfig = signingConfigs.getByName("debug")
-
-            manifestPlaceholders["enableCrashReporting"] = "false"
-            manifestPlaceholders["enableLogging"] = "true"
 
             isDebuggable = true
         }
