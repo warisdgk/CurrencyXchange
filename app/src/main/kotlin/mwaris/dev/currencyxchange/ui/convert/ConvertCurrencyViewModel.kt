@@ -35,7 +35,7 @@ class ConvertCurrencyViewModel @Inject constructor(
         currencyRepository.getCurrenciesData()
             .map {
                 it.rates.keys.toList()
-            }.flowOn(Dispatchers.Default)
+            }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
