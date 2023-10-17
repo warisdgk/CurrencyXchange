@@ -1,9 +1,9 @@
 package mwaris.dev.currencyxchange.data.sync.helpers
 
 interface Synchronizer {
-    suspend fun Syncable.sync() = this@sync.syncWith(this@Synchronizer)
+    suspend fun Syncable.sync() = this@sync.syncWith()
 }
 
 interface Syncable {
-    suspend fun syncWith(synchronizer: Synchronizer): Boolean
+    suspend fun syncWith(): Boolean
 }

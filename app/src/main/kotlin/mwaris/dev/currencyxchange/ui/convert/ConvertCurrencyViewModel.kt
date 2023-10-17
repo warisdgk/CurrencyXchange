@@ -3,23 +3,26 @@ package mwaris.dev.currencyxchange.ui.convert
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import mwaris.dev.currencyxchange.data.remote.model.LatestCurrenciesInfo
 import mwaris.dev.currencyxchange.data.repositories.ICurrenciesRepository
+import mwaris.dev.currencyxchange.di.AppDispatchers
+import mwaris.dev.currencyxchange.di.Dispatcher
 import javax.inject.Inject
 
 @HiltViewModel
 class ConvertCurrencyViewModel @Inject constructor(
     currencyRepository: ICurrenciesRepository,
+    @Dispatcher(AppDispatchers.Default)
+    private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val _userSelection = MutableStateFlow(UserSelection())
     val userSelections: StateFlow<UserSelection> =
@@ -72,7 +75,7 @@ class ConvertCurrencyViewModel @Inject constructor(
         userSelections: UserSelection,
         latestCurrencyRates: LatestCurrenciesInfo
     ): List<ConvertedCurrencyItem> =
-        withContext(Dispatchers.Default) {
+        withContext(defaultDispatcher) {
             val amountToConvert = userSelections.amountToConvert.toDouble()
             val baseCurrencyRate: Double =
                 latestCurrencyRates.rates.getOrDefault(userSelections.currencyCode, 0.0)
