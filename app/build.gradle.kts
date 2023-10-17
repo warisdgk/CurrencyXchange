@@ -124,6 +124,12 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.testManifest)
+    api(libs.kotlinx.coroutines.test)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.test.core)
+
+    //LeakCanary For Memory Leaks
+    debugImplementation(libs.leakcanary)
 
     //Room For Local DB
     implementation(libs.room.ktx)
