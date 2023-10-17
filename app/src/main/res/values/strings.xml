@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">CurrencyXchange</string>
+
+    <string name="sync_notification_title">CurrencyXchange</string>
+    <string name="sync_notification_channel_name">CurrencySync</string>
+    <string name="sync_notification_channel_description">Background task to fetch latest currencies data</string>
+    <string name="add_amount_to_convert">Add amount to convert</string>
+    <string name="not_connected">You are not connected to internet.</string>
 </resources>
